@@ -1,17 +1,27 @@
-# **ETL proces datasetu AmazonBooks**
+# **ETL proces datasetu Northwind**
 
-Tento repozitár obsahuje implementáciu ETL procesu v Snowflake pre analýzu dát z **AmazonBooks** datasetu. Projekt sa zameriava na preskúmanie správania používateľov a ich čitateľských preferencií na základe hodnotení kníh a demografických údajov používateľov. Výsledný dátový model umožňuje multidimenzionálnu analýzu a vizualizáciu kľúčových metrik.
+Tento repozitár obsahuje implementáciu ETL procesu v Snowflake na analýzu dát z datasetu Northwind. Cieľom projektu je preskúmať obchodné procesy, vzťahy medzi zákazníkmi a dodávateľmi, ako aj analýzu predaja a objednávok. Tým sa vytvorí robustný model, ktorý umožní multidimenzionálnu analýzu a vizualizáciu kľúčových metrík.
 
 ---
 ## **1. Úvod a popis zdrojových dát**
-Cieľom semestrálneho projektu je analyzovať dáta týkajúce sa kníh, používateľov a ich hodnotení. Táto analýza umožňuje identifikovať trendy v čitateľských preferenciách, najpopulárnejšie knihy a správanie používateľov.
+Projekt sa zaoberá analýzou obchodných vzťahov medzi zákazníkmi, dodávateľmi a produktmi. Na základe týchto informácií sa identifikujú trendy v predaji, najpredávanejšie produkty a efektivita dodávateľov. Tento ETL proces štrukturalizuje surové dáta a pripraví ich pre analytické nástroje, aby mohli poskytnúť hodnotné poznatky.
 
-Zdrojové dáta pochádzajú z Kaggle datasetu dostupného [tu](https://www.kaggle.com/datasets/saurabhbagchi/books-dataset). Dataset obsahuje päť hlavných tabuliek:
-- `books`
-- `ratings`
-- `users`
-- `occupations`
-- `education_levels`
+Zdrojové dáta pochádzajú z datasetu Northwind, ktorý obsahuje nasledujúce hlavné tabuľky:
+Customers:
+Obsahuje informácie o zákazníkoch, ako sú meno, adresa, krajina a kontakt.
+Používa sa na identifikáciu zákazníkov a ich objednávok.
+Orders:
+Obsahuje detaily o objednávkach, ako čas objednávky, celková cena a ID zákazníka.
+Slúži na analýzu objemu predaja a histórie objednávok.
+Products:
+Zahŕňa informácie o produktoch, ako názov, cena a dostupnosť.
+Umožňuje analýzu najpredávanejších produktov.
+Suppliers:
+Obsahuje údaje o dodávateľoch, ako sú meno, adresa a kontaktné informácie.
+Táto tabuľka pomáha pochopiť efektivitu a kvalitu dodávok.
+Order Details:
+Informácie o položkách v jednotlivých objednávkach, ako počet, cena a zľava.
+Prepojuje objednávky a produkty pre detailnú analýzu.
 
 Účelom ETL procesu bolo tieto dáta pripraviť, transformovať a sprístupniť pre viacdimenzionálnu analýzu.
 

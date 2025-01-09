@@ -44,7 +44,7 @@ Navrhnutý bol **hviezdicový model (star schema)**, pre efektívnu analýzu kde
 <p align="center">
   <img src="https://github.com/JKabathova/AmazonBooks-ETL/blob/master/star_schema.png" alt="Star Schema">
   <br>
-  <em>Obrázok 2 Schéma hviezdy pre AmazonBooks</em>
+  <em>Obrázok 2 Schéma hviezdy pre Northwind</em>
 </p>
 
 ---

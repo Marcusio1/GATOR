@@ -34,10 +34,14 @@ Surové dáta sú usporiadané v relačnom modeli, ktorý je znázornený na **e
 ## **2 Dimenzionálny model**
 
 Navrhnutý bol **hviezdicový model (star schema)**, pre efektívnu analýzu kde centrálny bod predstavuje faktová tabuľka **`fact_ratings`**, ktorá je prepojená s nasledujúcimi dimenziami:
-- **`dim_books`**: Obsahuje podrobné informácie o knihách (názov, autor, rok vydania, vydavateľ).
-- **`dim_users`**: Obsahuje demografické údaje o používateľoch, ako sú vekové kategórie, pohlavie, povolanie a vzdelanie.
-- **`dim_date`**: Zahrňuje informácie o dátumoch hodnotení (deň, mesiac, rok, štvrťrok).
-- **`dim_time`**: Obsahuje podrobné časové údaje (hodina, AM/PM).
+- **`dim_date`**: Obsahuje informácie o dátumoch a časových údajoch spojených s objednávkami.
+- **`dim_customers`**: Obsahuje podrobné informácie o zákazníkoch, ktorí zadali objednávky.
+- **`dim_employees`**: Obsahuje údaje o zamestnancoch, ktorí spracovávajú objednávky.
+- **`dim_shippers`**:  Obsahuje údaje o prepravných spoločnostiach, ktoré doručujú objednávky.
+- **`dim_products`**:  Obsahuje podrobné informácie o produktoch dostupných v ponuke.
+- **`dim_categories`**: Obsahuje informácie o kategóriách produktov.
+- **`dim_suppliers`**: Obsahuje údaje o dodávateľoch produktov.
+
 
 Štruktúra hviezdicového modelu je znázornená na diagrame nižšie. Diagram ukazuje prepojenia medzi faktovou tabuľkou a dimenziami, čo zjednodušuje pochopenie a implementáciu modelu.
 

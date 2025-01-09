@@ -7,7 +7,7 @@ Tento repozitár obsahuje implementáciu ETL procesu v Snowflake na analýzu dá
 Projekt sa zaoberá analýzou obchodných vzťahov medzi zákazníkmi, dodávateľmi a produktmi. Na základe týchto informácií sa identifikujú trendy v predaji, najpredávanejšie produkty a efektivita dodávateľov. Tento ETL proces štrukturalizuje surové dáta a pripraví ich pre analytické nástroje, aby mohli poskytnúť hodnotné poznatky.
 
 Zdrojové dáta pochádzajú z datasetu Northwind, ktorý obsahuje nasledujúce hlavné tabuľky:
-Customers:
+ - Customers:
 Obsahuje informácie o zákazníkoch, ako sú meno, adresa, krajina a kontakt.
 Používa sa na identifikáciu zákazníkov a ich objednávok.
 Orders:

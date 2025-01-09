@@ -8,8 +8,8 @@ Projekt sa zaoberá analýzou obchodných vzťahov medzi zákazníkmi, dodávate
 
 Zdrojové dáta pochádzajú z datasetu Northwind, ktorý obsahuje nasledujúce hlavné tabuľky:
  - Customers:
-Obsahuje informácie o zákazníkoch, ako sú meno, adresa, krajina a kontakt.
-Používa sa na identifikáciu zákazníkov a ich objednávok.
+*Obsahuje informácie o zákazníkoch, ako sú meno, adresa, krajina a kontakt.
+*Používa sa na identifikáciu zákazníkov a ich objednávok.
 - Orders:
 Obsahuje detaily o objednávkach, ako čas objednávky, celková cena a ID zákazníka.
 Slúži na analýzu objemu predaja a histórie objednávok.

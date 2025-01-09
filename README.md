@@ -248,4 +248,4 @@ Dashboard poskytuje komplexný pohľad na dáta, pričom zodpovedá dôležité 
 
 ---
 
-**Autor:** Janka Pecuchová
+**Autor:** Marek Gendiar

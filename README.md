@@ -10,16 +10,16 @@ Zdrojové dáta pochádzajú z datasetu Northwind, ktorý obsahuje nasledujúce 
  - Customers:
 Obsahuje informácie o zákazníkoch, ako sú meno, adresa, krajina a kontakt.
 Používa sa na identifikáciu zákazníkov a ich objednávok.
-Orders:
+- Orders:
 Obsahuje detaily o objednávkach, ako čas objednávky, celková cena a ID zákazníka.
 Slúži na analýzu objemu predaja a histórie objednávok.
-Products:
+- Products:
 Zahŕňa informácie o produktoch, ako názov, cena a dostupnosť.
 Umožňuje analýzu najpredávanejších produktov.
-Suppliers:
+- Suppliers:
 Obsahuje údaje o dodávateľoch, ako sú meno, adresa a kontaktné informácie.
 Táto tabuľka pomáha pochopiť efektivitu a kvalitu dodávok.
-Order Details:
+- Order Details:
 Informácie o položkách v jednotlivých objednávkach, ako počet, cena a zľava.
 Prepojuje objednávky a produkty pre detailnú analýzu.
 

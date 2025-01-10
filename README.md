@@ -53,7 +53,7 @@ Navrhnutý bol **hviezdicový model (star schema)**, pre efektívnu analýzu kde
 
 ---
 ## **3. ETL proces v Snowflake**
-ETL proces pozostával z troch hlavných fáz: `extrahovanie` (Extract), `transformácia` (Transform) a `načítanie` (Load). Tento proces bol implementovaný v Snowflake s cieľom pripraviť zdrojové dáta zo staging vrstvy do viacdimenzionálneho modelu vhodného na analýzu a vizualizáciu.
+Proces ETL zahŕňa tri hlavné kroky: `extrahovanie` '(Extract)', `transformácia` (Transform) a `načítanie` (Load). V prostredí Snowflake bol tento proces navrhnutý na spracovanie zdrojových dát zo staging vrstvy a ich prípravu do viacdimenzionálneho modelu vhodného na analytické účely a vizualizáciu.
 
 ---
 ### **3.1 Extract (Extrahovanie dát)**
@@ -61,99 +61,99 @@ Dáta zo zdrojového datasetu (formát `.csv`) boli najprv nahraté do Snowflake
 
 #### Príklad kódu:
 ```sql
-CREATE OR REPLACE STAGE my_stage;
+CREATE STAGE my_stage;
 ```
 Do stage boli následne nahraté súbory obsahujúce údaje o knihách, používateľoch, hodnoteniach, zamestnaniach a úrovniach vzdelania. Dáta boli importované do staging tabuliek pomocou príkazu `COPY INTO`. Pre každú tabuľku sa použil podobný príkaz:
 
 ```sql
-COPY INTO occupations_staging
-FROM @my_stage/occupations.csv
-FILE_FORMAT = (TYPE = 'CSV' SKIP_HEADER = 1);
+CREATE FILE FORMAT my_file_format
+    TYPE = 'CSV'
+    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+    SKIP_HEADER = 1
+    ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE;
 ```
 
 V prípade nekonzistentných záznamov bol použitý parameter `ON_ERROR = 'CONTINUE'`, ktorý zabezpečil pokračovanie procesu bez prerušenia pri chybách.
 
 ---
-### **3.1 Transfor (Transformácia dát)**
+### **3.2 Transfor (Transformácia dát)**
 
 V tejto fáze boli dáta zo staging tabuliek vyčistené, transformované a obohatené. Hlavným cieľom bolo pripraviť dimenzie a faktovú tabuľku, ktoré umožnia jednoduchú a efektívnu analýzu.
 
-Dimenzie boli navrhnuté na poskytovanie kontextu pre faktovú tabuľku. `Dim_users` obsahuje údaje o používateľoch vrátane vekových kategórií, pohlavia, zamestnania a vzdelania. Transformácia zahŕňala rozdelenie veku používateľov do kategórií (napr. „18-24“) a pridanie popisov zamestnaní a vzdelania. Táto dimenzia je typu SCD 2, čo umožňuje sledovať historické zmeny v zamestnaní a vzdelaní používateľov.
-```sql
-CREATE TABLE dim_users AS
+Dimenzie boli navrhnuté na poskytovanie kontextu pre faktovú tabuľku. `Dim_Categories` obsahuje jedinečné záznamy kategórií z tabuľky categories, ktoré sú dimenziou v hviezdicovom modeli. Táto dimenzia poskytuje popisné informácie o kategóriách, ktoré môžu byť použité na analýzu faktov, napríklad v predajoch.
+```
+CREATE TABLE Dim_Categories AS
 SELECT DISTINCT
-    u.userId AS dim_userId,
-    CASE 
-        WHEN u.age < 18 THEN 'Under 18'
-        WHEN u.age BETWEEN 18 AND 24 THEN '18-24'
-        WHEN u.age BETWEEN 25 AND 34 THEN '25-34'
-        WHEN u.age BETWEEN 35 AND 44 THEN '35-44'
-        WHEN u.age BETWEEN 45 AND 54 THEN '45-54'
-        WHEN u.age >= 55 THEN '55+'
-        ELSE 'Unknown'
-    END AS age_group,
-    u.gender,
-    o.name AS occupation,
-    e.name AS education_level
-FROM users_staging u
-JOIN occupations_staging o ON u.occupationId = o.occupationId
-JOIN education_levels_staging e ON u.educationId = e.educationId;
+    c.CategoryID AS CategoryID,
+    c.CategoryName AS CategoryName,
+    c.Description AS Description
+FROM Categories c;
 ```
-Dimenzia `dim_date` je navrhnutá tak, aby uchovávala informácie o dátumoch hodnotení kníh. Obsahuje odvodené údaje, ako sú deň, mesiac, rok, deň v týždni (v textovom aj číselnom formáte) a štvrťrok. Táto dimenzia je štruktúrovaná tak, aby umožňovala podrobné časové analýzy, ako sú trendy hodnotení podľa dní, mesiacov alebo rokov. Z hľadiska SCD je táto dimenzia klasifikovaná ako SCD Typ 0. To znamená, že existujúce záznamy v tejto dimenzii sú nemenné a uchovávajú statické informácie.
+Dimenzia Dim_Customers je navrhnutá tak, aby uchovávala detailné informácie o zákazníkoch. Obsahuje údaje, ako sú jedinečný identifikátor zákazníka, jeho meno, kontaktné údaje (napr. kontakt, adresa, mesto, PSČ a krajina). Táto dimenzia umožňuje analýzu údajov na základe zákazníckych atribútov, ako sú geografická poloha, kontaktné osoby alebo segmenty zákazníkov.
 
-V prípade, že by bolo potrebné sledovať zmeny súvisiace s odvodenými atribútmi (napr. pracovné dni vs. sviatky), bolo by možné prehodnotiť klasifikáciu na SCD Typ 1 (aktualizácia hodnôt) alebo SCD Typ 2 (uchovávanie histórie zmien). V aktuálnom modeli však táto potreba neexistuje, preto je `dim_date` navrhnutá ako SCD Typ 0 s rozširovaním o nové záznamy podľa potreby.
+Dimenzia Dim_Customers je klasifikovaná ako SCD Typ 0, čo znamená, že existujúce záznamy sú nemenné. Uchováva statické informácie o zákazníkoch, pričom sa nepripúšťa ich úprava.
+
+Možné zmeny v SCD:
+SCD Typ 1: Ak by bolo potrebné aktualizovať existujúce údaje (napríklad aktualizáciu adresy alebo kontaktného mena), klasifikácia by sa mohla zmeniť na SCD Typ 1, kde staré hodnoty budú prepísané novými.
+SCD Typ 2: Pre prípad sledovania histórie zmien zákazníckych údajov by bolo možné prejsť na SCD Typ 2. V takom prípade by boli historické záznamy uchované s časovou pečiatkou alebo dodatočným indikátorom verzie.
 
 ```sql
-CREATE TABLE dim_date AS
-SELECT
-    ROW_NUMBER() OVER (ORDER BY CAST(timestamp AS DATE)) AS dim_dateID,
-    CAST(timestamp AS DATE) AS date,
-    DATE_PART(day, timestamp) AS day,
-    DATE_PART(dow, timestamp) + 1 AS dayOfWeek,
-    CASE DATE_PART(dow, timestamp) + 1
-        WHEN 1 THEN 'Pondelok'
-        WHEN 2 THEN 'Utorok'
-        WHEN 3 THEN 'Streda'
-        WHEN 4 THEN 'Štvrtok'
-        WHEN 5 THEN 'Piatok'
-        WHEN 6 THEN 'Sobota'
-        WHEN 7 THEN 'Nedeľa'
-    END AS dayOfWeekAsString,
-    DATE_PART(month, timestamp) AS month,
-    DATE_PART(year, timestamp) AS year,
-    DATE_PART(quarter, timestamp) AS quarter
-FROM ratings_staging;
+CREATE TABLE Dim_Customers AS
+SELECT DISTINCT
+    c.CustomerID AS CustomerID,
+    c.CustomerName AS CustomerName,
+    c.ContactName AS ContactName,
+    c.Address AS Address,
+    c.City AS City,
+    c.PostalCode AS PostalCode,
+    c.Country AS Country
+FROM Customers c;
 ```
-Podobne `dim_books` obsahuje údaje o knihách, ako sú názov, autor, rok vydania a vydavateľ. Táto dimenzia je typu SCD Typ 0, pretože údaje o knihách sú považované za nemenné, napríklad názov knihy alebo meno autora sa nemenia. 
 
-Faktová tabuľka `fact_ratings` obsahuje záznamy o hodnoteniach a prepojenia na všetky dimenzie. Obsahuje kľúčové metriky, ako je hodnota hodnotenia a časový údaj.
+Faktová tabuľka `Fact_Sales` je navrhnutá tak, aby uchovávala detailné údaje o predajoch vrátane objednávok, produktov, zákazníkov, zamestnancov, dodávateľov a kategórií. Obsahuje metriky, ako je počet predaných kusov, cena produktu a celková suma objednávky. Táto tabuľka je optimalizovaná na analýzu predajov a sledovanie výkonnosti obchodných procesov.
+
 ```sql
-CREATE TABLE fact_ratings AS
-SELECT 
-    r.ratingId AS fact_ratingID,
-    r.timestamp AS timestamp,
-    r.rating,
-    d.dim_dateID AS dateID,
-    t.dim_timeID AS timeID,
-    b.dim_bookId AS bookID,
-    u.dim_userId AS userID
-FROM ratings_staging r
-JOIN dim_date d ON CAST(r.timestamp AS DATE) = d.date
-JOIN dim_time t ON r.timestamp = t.timestamp
-JOIN dim_books b ON r.ISBN = b.dim_bookId
-JOIN dim_users u ON r.userId = u.dim_userId;
+CREATE TABLE Fact_Sales AS
+SELECT DISTINCT
+    o.OrderID AS OrderID,
+    o.CustomerID AS CustomerID,
+    o.EmployeeID AS EmployeeID,
+    o.OrderDate AS OrderDate,
+    od.OrderDetailID AS OrderDetailID,
+    od.ProductID AS ProductID,
+    od.Quantity AS Quantity,
+    p.Price AS Price,
+    (od.Quantity * p.Price) AS TotalAmount,
+    s.ShipperID AS ShipperID,
+    c.CustomerID AS CustomerKey,
+    e.EmployeeID AS EmployeeKey,
+    ps.SupplierID AS SupplierID,
+    cat.CategoryID AS CategoryID
+FROM Orders o
+JOIN OrderDetails od ON o.OrderID = od.OrderID
+JOIN Products p ON od.ProductID = p.ProductID
+JOIN Shippers s ON o.ShipperID = s.ShipperID
+JOIN Employees e ON o.EmployeeID = e.EmployeeID
+JOIN Suppliers ps ON p.SupplierID = ps.SupplierID
+JOIN Categories cat ON p.CategoryID = cat.CategoryID
+JOIN Customers c ON o.CustomerID = c.CustomerID;
+
 ```
 
 ---
 ### **3.3 Load (Načítanie dát)**
 
 Po úspešnom vytvorení dimenzií a faktovej tabuľky boli dáta nahraté do finálnej štruktúry. Na záver boli staging tabuľky odstránené, aby sa optimalizovalo využitie úložiska:
+
 ```sql
-DROP TABLE IF EXISTS books_staging;
-DROP TABLE IF EXISTS education_levels_staging;
-DROP TABLE IF EXISTS occupations_staging;
-DROP TABLE IF EXISTS ratings_staging;
-DROP TABLE IF EXISTS users_staging;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS employees;
+DROP TABLE IF EXISTS orderdetails;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS shippers;
+DROP TABLE IF EXISTS suppliers;
 ```
 ETL proces v Snowflake umožnil spracovanie pôvodných dát z `.csv` formátu do viacdimenzionálneho modelu typu hviezda. Tento proces zahŕňal čistenie, obohacovanie a reorganizáciu údajov. Výsledný model umožňuje analýzu čitateľských preferencií a správania používateľov, pričom poskytuje základ pre vizualizácie a reporty.
 

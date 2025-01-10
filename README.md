@@ -57,13 +57,41 @@ Proces ETL zahŕňa tri hlavné kroky: `extrahovanie` '(Extract)', `transformác
 
 ---
 ### **3.1 Extract (Extrahovanie dát)**
-Dáta zo zdrojového datasetu (formát `.csv`) boli najprv nahraté do Snowflake prostredníctvom interného stage úložiska s názvom `my_stage`. Stage v Snowflake slúži ako dočasné úložisko na import alebo export dát. Vytvorenie stage bolo zabezpečené príkazom:
+Dáta zo zdrojového datasetu (formát `.csv`) boli najprv nahraté do Snowflake prostredníctvom interného stage úložiska s názvom `my_stage`. V prvom kroku som nahral pôvodné dáta vo formáte csv. do interného stage úložiska, ktoré som vytvoril príkazom:
 
 #### Príklad kódu:
 ```sql
 CREATE STAGE my_stage;
 ```
-Do stage boli následne nahraté súbory obsahujúce údaje o knihách, používateľoch, hodnoteniach, zamestnaniach a úrovniach vzdelania. Dáta boli importované do staging tabuliek pomocou príkazu `COPY INTO`. Pre každú tabuľku sa použil podobný príkaz:
+
+Následne som vytvoril jednotlivé tabuľky(zatiaľ neobsahujú žiadne dáta)
+Príklad príkazu, ktorý som použil na tvorbu tabuľky Track:
+```sql
+CREATE TABLE Track (
+TrackId INT PRIMARY KEY,
+Name STRING,
+AlbumId INT,
+MediaTypeId INT,
+GenreId INT,
+Composer STRING,
+Milliseconds INT,
+Bytes INT,
+UnitPrice DECIMAL(10, 2)
+);
+```
+Týmto spôsobom som vytvoril aj zvyšné tabuľky.
+
+V ďaľšom kroku som pomocou príkazu uvedeného nižšie vytvoril súborový formát s názvom my_file_format, ktorý slúži na importovanie dát vo forme CSV.
+
+```sql
+CREATE FILE FORMAT my_file_format
+TYPE = 'CSV'
+FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+SKIP_HEADER = 1
+ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE;
+```
+
+Následne som importoval dáta do staging tabuliek pomocou nasledujúceho príkazu:
 
 ```sql
 COPY INTO categories

@@ -164,7 +164,7 @@ ETL proces v Snowflake umožnil spracovanie pôvodných dát z `.csv` formátu d
 Dashboard obsahuje `6 vizualizácií`, ktoré poskytujú základný prehľad o kľúčových metrikách a trendoch týkajúcich sa kníh, používateľov a hodnotení. Tieto vizualizácie odpovedajú na dôležité otázky a umožňujú lepšie pochopiť správanie používateľov a ich preferencie.
 
 <p align="center">
-  <img src="(https://github.com/Marcusio1/GATOR/blob/main/Northwind_dashboard.png.png" alt="ERD Schema">
+  <img src="https://github.com/Marcusio1/GATOR/blob/main/Northwind_dashboard.png.png" alt="ERD Schema">
   <br>
   <em>Obrázok 3 Dashboard Northwind datasetu</em>
 </p>

@@ -171,70 +171,91 @@ Dashboard obsahuje `6 vizualizácií`, ktoré poskytujú základný prehľad o k
 
 ---
 ### **Graf 1: Rozdelenie tržieb podľa kategórií produktov**
-Táto vizualizácia zobrazuje 10 kníh s najväčším počtom hodnotení. Umožňuje identifikovať najpopulárnejšie tituly medzi používateľmi. Zistíme napríklad, že kniha `Wild Animus` má výrazne viac hodnotení v porovnaní s ostatnými knihami. Tieto informácie môžu byť užitočné na odporúčanie kníh alebo marketingové kampane.
+Tento dotaz zobrazuje celkové tržby (TotalAmount) podľa kategórií produktov. Zoskupujeme tržby podľa názvu kategórie a zoradíme výsledky od najvyšších tržieb po najnižšie.
 
 ```sql
 SELECT 
-    b.title AS book_title,
-    COUNT(f.fact_ratingID) AS total_ratings
-FROM FACT_RATINGS f
-JOIN DIM_BOOKS b ON f.bookID = b.dim_bookId
-GROUP BY b.title
-ORDER BY total_ratings DESC
-LIMIT 10;
+    c.CategoryName,
+    SUM(fs.TotalAmount) AS TotalAmount
+FROM 
+    Fact_Sales fs
+JOIN 
+    Dim_Categories c ON fs.CategoryID = c.CategoryID
+GROUP BY 
+    c.CategoryName
+ORDER BY 
+    TotalAmount DESC;
 ```
 ---
 ### **Graf 2: Rozdelenie tržieb podľa zamestnancov**
-Graf znázorňuje rozdiely v počte hodnotení medzi mužmi a ženami. Z údajov je zrejmé, že ženy hodnotili knihy o niečo častejšie ako muži, no rozdiely sú minimálne a aktivita medzi pohlaviami je viac-menej vyrovnaná. Táto vizualizácia ukazuje, že obsah alebo kampane môžu byť efektívne zamerané na obe pohlavia bez potreby výrazného rozlišovania.
+Tento dotaz ukazuje, aké tržby (TotalAmount) generovali jednotliví zamestnanci. Zamestnanci sú zoradení podľa celkových tržieb, pričom najviac zarabajúci zamestnanci sú na začiatku.
 
 ```sql
 SELECT 
-    u.gender,
-    COUNT(f.fact_ratingID) AS total_ratings
-FROM FACT_RATINGS f
-JOIN DIM_USERS u ON f.userID = u.dim_userId
-GROUP BY u.gender;
+    e.FirstName || ' ' || e.LastName AS EmployeeName,
+    SUM(fs.TotalAmount) AS TotalAmount
+FROM 
+    Fact_Sales fs
+JOIN 
+    Dim_Employees e ON fs.EmployeeID = e.EmployeeID
+GROUP BY 
+    EmployeeName
+ORDER BY 
+    TotalAmount DESC;
 ```
 ---
 ### **Graf 3: Rozdelenie tržieb podľa prepravcov**
-Graf ukazuje, ako sa priemerné hodnotenie kníh mení podľa roku ich vydania v období 2000–2024. Z vizualizácie je vidieť, že medzi rokmi 2000 a 2005 si knihy udržiavali stabilné priemerné hodnotenie. Po tomto období však nastal výrazný pokles priemerného hodnotenia. Od tohto bodu opäť postupne stúpajú a  po roku 2020, je tendencia, že knihy získavajú vyššie priemerné hodnotenia. Tento trend môže naznačovať zmenu kvality kníh, vývoj čitateľských preferencií alebo rozdiely v hodnotiacich kritériách používateľov.
+Tento dotaz zobrazuje tržby (TotalAmount) podľa rôznych prepravcov, ktorí sa podieľajú na dodávkach. Výsledky sú zoradené podľa celkových tržieb od najvyšších po najnižšie.
 
 ```sql
 SELECT 
-    b.release_year AS year,
-    AVG(f.rating) AS avg_rating
-FROM FACT_RATINGS f
-JOIN DIM_BOOKS b ON f.bookID = b.dim_bookId
-WHERE b.release_year BETWEEN 2000 AND 2024
-GROUP BY b.release_year
-ORDER BY b.release_year;
+    s.ShipperName,
+    SUM(fs.TotalAmount) AS TotalAmount
+FROM 
+    Fact_Sales fs
+JOIN 
+    Dim_Shippers s ON fs.ShipperID = s.ShipperID
+GROUP BY 
+    s.ShipperName
+ORDER BY 
+    TotalAmount DESC;
 ```
 ---
 ### **Graf 4: Rozdelenie tržieb podľa produktov**
-Tabuľka znázorňuje, ako sú hodnotenia rozdelené podľa jednotlivých dní v týždni. Z údajov vyplýva, že najväčšia aktivita je zaznamenaná cez víkendy (sobota a nedeľa) a počas dní na prelome pracovného týždňa a víkendu (piatok a pondelok). Tento trend naznačuje, že používatelia majú viac času na čítanie a hodnotenie kníh počas voľných dní.
+Tento dotaz zobrazuje celkové tržby (TotalAmount) generované jednotlivými produktmi. Produkty sú zoradené podľa tržieb v zostupnom poradí.
 
 ```sql
 SELECT 
-    d.dayOfWeekAsString AS day,
-    COUNT(f.fact_ratingID) AS total_ratings
-FROM FACT_RATINGS f
-JOIN DIM_DATE d ON f.dateID = d.dim_dateID
-GROUP BY d.dayOfWeekAsString
-ORDER BY total_ratings DESC;
+    p.ProductName,
+    SUM(fs.TotalAmount) AS TotalAmount
+FROM 
+    Fact_Sales fs
+JOIN 
+    Dim_Products p ON fs.ProductID = p.ProductID
+GROUP BY 
+    p.ProductName
+ORDER BY 
+    TotalAmount DESC;
 ```
 ---
 ### **Graf 5: Rozdelenie tržieb podľa zamestnancov a zákazníkov**
-Tento graf  poskytuje informácie o počte hodnotení podľa povolaní používateľov. Umožňuje analyzovať, ktoré profesijné skupiny sú najviac aktívne pri hodnotení kníh a ako môžu byť tieto skupiny zacielené pri vytváraní personalizovaných odporúčaní. Z údajov je zrejmé, že najaktívnejšími profesijnými skupinami sú `Marketing Specialists` a `Librarians`, s viac ako 1 miliónom hodnotení. 
+Tento dotaz ukazuje celkové tržby (TotalAmount), ktoré vygenerovali rôzni zamestnanci pre rôznych zákazníkov. Výsledky sú zoradené podľa tržieb, pričom najväčšie tržby sú na vrchu.
 
 ```sql
 SELECT 
-    u.occupation AS occupation,
-    COUNT(f.fact_ratingID) AS total_ratings
-FROM FACT_RATINGS f
-JOIN DIM_USERS u ON f.userID = u.dim_userId
-GROUP BY u.occupation
-ORDER BY total_ratings DESC
-LIMIT 10;
+    e.FirstName || ' ' || e.LastName AS EmployeeName,
+    cu.CustomerName,
+    SUM(fs.TotalAmount) AS TotalAmount
+FROM 
+    Fact_Sales fs
+JOIN 
+    Dim_Employees e ON fs.EmployeeID = e.EmployeeID
+JOIN 
+    Dim_Customers cu ON fs.CustomerID = cu.CustomerID
+GROUP BY 
+    EmployeeName, cu.CustomerName
+ORDER BY 
+    TotalAmount DESC;
 ```
 
 **Autor:** Marek Gendiar

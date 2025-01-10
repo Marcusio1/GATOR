@@ -64,7 +64,7 @@ Dáta zo zdrojového datasetu (formát `.csv`) boli najprv nahraté do Snowflake
 CREATE STAGE my_stage;
 ```
 
-Následne som vytvoril jednotlivé tabuľky(zatiaľ neobsahujú žiadne dáta)
+Následne som vytvoril jednotlivé tabuľky ,zatiaľ neobsahujú žiadne dáta.
 Príklad príkazu, ktorý som použil na tvorbu tabuľky Track:
 ```sql
 CREATE TABLE Track (

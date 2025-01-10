@@ -104,7 +104,7 @@ V prípade nekonzistentných záznamov bol použitý parameter `ON_ERROR = 'CONT
 ---
 ### **3.2 Transfor (Transformácia dát)**
 
-V tejto fáze boli dáta zo staging tabuliek vyčistené, transformované a obohatené. Hlavným cieľom bolo pripraviť dimenzie a faktovú tabuľku, ktoré umožnia jednoduchú a efektívnu analýzu.
+V tejto fáze boli dáta zo staging tabuliek očistené, transformované a doplnené o potrebné informácie. Cieľom bolo vytvoriť dimenzionálne tabuľky a faktovú tabuľku, ktoré umožnia efektívnu a prehľadnú analýzu.
 
 Dimenzie boli navrhnuté na poskytovanie kontextu pre faktovú tabuľku. `Dim_Categories` obsahuje jedinečné záznamy kategórií z tabuľky categories, ktoré sú dimenziou v hviezdicovom modeli. Táto dimenzia poskytuje popisné informácie o kategóriách, ktoré môžu byť použité na analýzu faktov, napríklad v predajoch.
 ```sql

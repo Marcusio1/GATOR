@@ -81,7 +81,7 @@ V prípade nekonzistentných záznamov bol použitý parameter `ON_ERROR = 'CONT
 V tejto fáze boli dáta zo staging tabuliek vyčistené, transformované a obohatené. Hlavným cieľom bolo pripraviť dimenzie a faktovú tabuľku, ktoré umožnia jednoduchú a efektívnu analýzu.
 
 Dimenzie boli navrhnuté na poskytovanie kontextu pre faktovú tabuľku. `Dim_Categories` obsahuje jedinečné záznamy kategórií z tabuľky categories, ktoré sú dimenziou v hviezdicovom modeli. Táto dimenzia poskytuje popisné informácie o kategóriách, ktoré môžu byť použité na analýzu faktov, napríklad v predajoch.
-```
+```sql
 CREATE TABLE Dim_Categories AS
 SELECT DISTINCT
     c.CategoryID AS CategoryID,
@@ -89,6 +89,7 @@ SELECT DISTINCT
     c.Description AS Description
 FROM Categories c;
 ```
+
 Dimenzia Dim_Customers je navrhnutá tak, aby uchovávala detailné informácie o zákazníkoch. Obsahuje údaje, ako sú jedinečný identifikátor zákazníka, jeho meno, kontaktné údaje (napr. kontakt, adresa, mesto, PSČ a krajina). Táto dimenzia umožňuje analýzu údajov na základe zákazníckych atribútov, ako sú geografická poloha, kontaktné osoby alebo segmenty zákazníkov.
 
 Dimenzia Dim_Customers je klasifikovaná ako SCD Typ 0, čo znamená, že existujúce záznamy sú nemenné. Uchováva statické informácie o zákazníkoch, pričom sa nepripúšťa ich úprava.

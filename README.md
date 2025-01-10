@@ -66,11 +66,9 @@ CREATE STAGE my_stage;
 Do stage boli následne nahraté súbory obsahujúce údaje o knihách, používateľoch, hodnoteniach, zamestnaniach a úrovniach vzdelania. Dáta boli importované do staging tabuliek pomocou príkazu `COPY INTO`. Pre každú tabuľku sa použil podobný príkaz:
 
 ```sql
-CREATE FILE FORMAT my_file_format
-    TYPE = 'CSV'
-    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
-    SKIP_HEADER = 1
-    ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE;
+COPY INTO categories
+    FROM @my_stage/categories.csv
+    FILE_FORMAT = (FORMAT_NAME = my_file_format);
 ```
 
 V prípade nekonzistentných záznamov bol použitý parameter `ON_ERROR = 'CONTINUE'`, ktorý zabezpečil pokračovanie procesu bez prerušenia pri chybách.

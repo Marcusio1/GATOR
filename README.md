@@ -33,14 +33,15 @@ Surové dáta sú usporiadané v relačnom modeli, ktorý je znázornený na **e
 ---
 ## **2 Dimenzionálny model**
 
-Navrhnutý bol **hviezdicový model (star schema)**, pre efektívnu analýzu kde centrálny bod predstavuje faktová tabuľka **`fact_ratings`**, ktorá je prepojená s nasledujúcimi dimenziami:
-- **`dim_date`**: Obsahuje informácie o dátumoch a časových údajoch spojených s objednávkami.
-- **`dim_customers`**: Obsahuje podrobné informácie o zákazníkoch, ktorí zadali objednávky.
-- **`dim_employees`**: Obsahuje údaje o zamestnancoch, ktorí spracovávajú objednávky.
-- **`dim_shippers`**:  Obsahuje údaje o prepravných spoločnostiach, ktoré doručujú objednávky.
-- **`dim_products`**:  Obsahuje podrobné informácie o produktoch dostupných v ponuke.
-- **`dim_categories`**: Obsahuje informácie o kategóriách produktov.
-- **`dim_suppliers`**: Obsahuje údaje o dodávateľoch produktov.
+Navrhnutý bol **hviezdicový model (star schema)**, pre efektívnu analýzu kde centrálny bod predstavuje faktová tabuľka **`Fact_Sales`**, ktorá je prepojená s nasledujúcimi dimenziami:
+- **`Dim_OrderDetails`**: Obsahuje podrobné informácie o jednotlivých položkách objednávok, vrátane množstva, ceny a zľavy.
+- **`Dim_Customers`**: Obsahuje podrobné informácie o zákazníkoch, ktorí zadali objednávky.
+- **`Dim_Employees`**: Obsahuje údaje o zamestnancoch, ktorí spracovávajú objednávky.
+- **`Dim_Shippers`**:  Obsahuje údaje o prepravných spoločnostiach, ktoré doručujú objednávky.
+- **`Dim_Products`**:  Obsahuje podrobné informácie o produktoch dostupných v ponuke.
+- **`Dim_Categories`**: Obsahuje informácie o kategóriách produktov.
+- **`Dim_Suppliers`**: Obsahuje údaje o dodávateľoch produktov.
+- **`Dim_Orders`**: Obsahuje základné informácie o objednávkach, ako sú dátum zadania objednávky, stav objednávky a identifikácia zákazníka.
 
 
 Štruktúra hviezdicového modelu je znázornená na diagrame nižšie. Diagram ukazuje prepojenia medzi faktovou tabuľkou a dimenziami, čo zjednodušuje pochopenie a implementáciu modelu.

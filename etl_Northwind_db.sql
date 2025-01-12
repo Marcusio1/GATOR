@@ -70,8 +70,6 @@ CREATE TABLE orders (
     OrderDate DATE,                 -- Dátum objednávky
     ShipperID INT,                  -- ID dopravcu (FK)
     PRIMARY KEY (OrderID),          -- Definovanie primárneho kľúča
-    FOREIGN KEY (CustomerID) REFERENCES customers(CustomerID),  -- Vzťah s tabuľkou customers
-    FOREIGN KEY (ShipperID) REFERENCES shippers(ShipperID)       -- Vzťah s tabuľkou shippers
 );
 
 -- Vytvorenie tabuľky employees

@@ -133,7 +133,72 @@ SELECT DISTINCT
     c.Description AS Description
 FROM Categories c;
 
--- ... Podobne pre ostatné dimenzie
+CREATE TABLE Dim_Customers AS
+SELECT DISTINCT
+    c.CustomerID AS CustomerID,
+    c.CustomerName AS CustomerName,
+    c.ContactName AS ContactName,
+    c.Address AS Address,
+    c.City AS City,
+    c.PostalCode AS PostalCode,
+    c.Country AS Country
+FROM Customers c;
+
+CREATE TABLE Dim_Shippers AS
+SELECT DISTINCT
+    s.ShipperID AS ShipperID,
+    s.ShipperName AS ShipperName,
+    s.Phone AS Phone
+FROM Shippers s;
+
+CREATE TABLE Dim_Suppliers AS
+SELECT DISTINCT
+    s.SupplierID AS SupplierID,
+    s.SupplierName AS SupplierName,
+    s.ContactName AS ContactName,
+    s.Address AS Address,
+    s.City AS City,
+    s.PostalCode AS PostalCode,
+    s.Country AS Country,
+    s.Phone AS Phone
+FROM Suppliers s;
+
+CREATE TABLE Dim_Products AS
+SELECT DISTINCT
+    p.ProductID AS ProductID,
+    p.ProductName AS ProductName,
+    p.SupplierID AS SupplierID,
+    p.CategoryID AS CategoryID,
+    p.Unit AS Unit,
+    p.Price AS Price
+FROM Products p;
+
+CREATE TABLE Dim_OrderDetails AS
+SELECT DISTINCT
+    od.OrderDetailID AS OrderDetailID,
+    od.OrderID AS OrderID,
+    od.ProductID AS ProductID,
+    od.Quantity AS Quantity
+FROM OrderDetails od;
+
+CREATE TABLE Dim_Orders AS
+SELECT DISTINCT
+    o.OrderID AS OrderID,
+    o.CustomerID AS CustomerID,
+    o.EmployeeID AS EmployeeID,
+    o.OrderDate AS OrderDate,
+    o.ShipperID AS ShipperID
+FROM Orders o;
+
+CREATE TABLE Dim_Employees AS
+SELECT DISTINCT
+    e.EmployeeID AS EmployeeID,
+    e.LastName AS LastName,
+    e.FirstName AS FirstName,
+    e.BirthDate AS BirthDate,
+    e.Photo AS Photo,
+    e.Notes AS Notes
+FROM Employees e;
 
 -- Vytvorenie faktovej tabuľky Fact_Sales
 CREATE TABLE Fact_Sales AS
